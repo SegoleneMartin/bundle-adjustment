@@ -315,4 +315,3 @@ def main():
     plt.figure()
     plt.plot(J, Z, 'o')
     
-"""
