@@ -210,23 +210,29 @@ def R(theta, i): #theta est un tableau 4x3
     return(np.dot(np.dot(RX(theta[i-1, 0]), RY(theta[i-1, 1])), 
     	RZ(theta[i-1, 2])))
 
-def matrice_K(f):
-    return(np.diag(np.array([f,f,1])))
+def matrice_K(f): #en fait c'est l'inverse de K
+    return(np.diag(np.array([1/f,1/f,1])))
 
 def matrice_C(b):
-    c1=np.array([[0,0,0,0][1,0,0,0][2,1,0,0][1,0,-1,0]])
-    c2=np.array([[0,0,0,0][-1,0,0,0][0,1,0,0][1,2,1,0]])
+    c1=np.array([[0,0,0,0],[1,0,0,0],[2,1,0,0],[1,0,-1,0]])
+    c2=np.array([[0,0,0,0],[-1,0,0,0],[0,1,0,0],[1,2,1,0]])
     return(np.array([c1,c2])*b)
 
 
 
 def det(x, theta, j, k, l, b):
+    k=k-1
+    l=l-1
     K=matrice_K(f)
-    col1 = np.dot(R(-theta,1), np.dot(1/K, x[j,k]))
-    col2 = np.dot(R(-theta,2), np.dot(1/K, x[j,l]))
+    print("k ", k)
+    print("l ", l)
+    print("j ", j)
+    col1 = np.dot(R(-theta,k), np.dot(K, x[j,k]))
+    col2 = np.dot(R(-theta,l), np.dot(K, x[j,l]))
     centre=matrice_C(b)
     col3 = [centre[0,l,k], centre[1, l, k], 0]
-    M = [C1, C2, C3]
+    M = [col1, col2, col3]
+    print(M)
     return(sl.det(M))
 
 
@@ -234,9 +240,9 @@ def F(x, theta, b):
     n = len(x)
     Y = np.zeros([6*n])
     for j in range(n):
-        Y[6*j: 6*(j+1)]=[det(x, theta, 1, 2, j, b), det(x, theta,1, 3, j, b),
-                         det(x, theta,1, 4, j, b), det(x, theta, 2, 3, j, b),
-                         det(x, theta, 2, 4, j, b), det(x, theta, 3, 4, j, b)]
+        Y[6*j: 6*(j+1)]=[det(x, theta, j, 1, 2, b), det(x, theta,j, 1, 3, b),
+                         det(x, theta,j, 1, 4, b), det(x, theta,j,  2, 3, b),
+                         det(x, theta,j, 2, 4, b), det(x, theta, j, 3, 4, b)]
     return(Y)
 
 def objective_function(theta_optimized, theta_fixed, x, b):
@@ -279,9 +285,8 @@ def main():
     for j in range(n):
         for i in range(4):
             #delta[i, j] = [normalvariate(0, s), normalvariate(0, s)] 
-            x[j, i] = np.dot(1/K, np.dot(P[i], X[j]))
-            x[j, i] = x[j, i] / x[j, i, 2] 
-            	+ [delta[j, i][0], delta[j, i][1], 0]  #on ajoute des perturbations
+            x[j, i] = np.dot(K, np.dot(P[i], X[j]))
+            x[j, i] = x[j, i] / x[j, i, 2] + [delta[j, i][0], delta[j, i][1], 0]  #on ajoute des perturbations
 
     Y = F(x, theta, b) 
     #print(Y)
@@ -294,17 +299,14 @@ def main():
     for j in range(1, 12):
         print(j)
         theta0 = (2*np.random.rand(j) - 1) * 50
-        print('Initial value of F', objective_function(theta0, 
-        	np.zeros(12-j), x, b))
-        print('value of F in zero', objective_function(np.zeros(j), 
-        	np.zeros(12-j), x, b))
+        print('Initial value of F', objective_function(theta0, np.zeros(12-j), x, b))
+        print('value of F in zero', objective_function(np.zeros(j), np.zeros(12-j), x, b))
         k = 0
-        for minimization_method in ['Nelder-Mead', 'Powell', 'CG', 
-        	'BFGS', 'L-BFGS-B', 'TNC', 'COBYLA', 'SLSQP']:
+        for minimization_method in ['Nelder-Mead', 'Powell', 'CG', 'BFGS', 'L-BFGS-B', 'TNC', 'COBYLA', 'SLSQP']:
             k += 1
             print(minimization_method)
             y = minimize(objective_function, x0=theta0, 
-            	method=minimization_method, args=(np.zeros(12-j), x, b), 
+            method=minimization_method, args=(np.zeros(12-j), x, b), 
                 options={'xtol': 1e-15, 'ftol': 1e-15}).x
             y = abs(np.array(y))
             y = np.reshape(y, (j))
@@ -314,4 +316,6 @@ def main():
             print(z)
     plt.figure()
     plt.plot(J, Z, 'o')
-    
+
+main()
+plt.show()
