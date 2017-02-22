@@ -6,96 +6,121 @@ from numpy import cos, sin
 
 def calcul_D(x, theta, j, k ,l):
     
-    alpha_1=theta[k,0]
-    alpha_2=theta[l,1]
-    beta_1=theta[k,1]
-    beta_2=theta[l,1]
-    gamma_1=theta[k,2]
-    gamma_2=theta[l,2]
+    a1=theta[k,0]
+    a2=theta[l,1]
+    b1=theta[k,1]
+    b2=theta[l,1]
+    g1=theta[k,2]
+    g2=theta[l,2]
     
-    x_1=x[j,k,0]
-    x_2=x[j,l,0]
-    y_1=x[j,k,1]
-    y_2=x[j,l,1]
+    x1=x[j,k,0]
+    x2=x[j,l,0]
+    y1=x[j,k,1]
+    y2=x[j,l,1]
     
-
+    #attention: ici on n'a pas multiplié par f**2 comme dans le latex
     D1=np.array([
     
-    -(cos(beta_2) *(cos(gamma_2) *x_2 + sin(gamma_2) *y_2) -  f*sin(beta_2))*(-sin(alpha_1)*(- sin(gamma_1)* x_1 + cos(gamma_1)* y_1) + cos(alpha_1) *(sin(beta_1) *(cos(gamma_1)* x_1 + sin(gamma_1) *y_1) +  f*cos(beta_1))),
+    -((cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f + (y1*(-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1)))/f)*((x2*cos(b2)*cos(g2))/f - sin(b2) + (y2*cos(b2)*sin(g2))/f)),
     
-    (cos(beta_1) *(cos(gamma_1)* x_1 + sin(gamma_1)* y_1) -  f*sin(beta_1))* (-sin(alpha_2) *(- sin(gamma_2)* x_2 + cos(gamma_2)* y_2) + cos(alpha_2) *(sin(beta_2)* (cos(gamma_2)* x_2 + sin(gamma_2)* y_2) +  f*cos(beta_2))),
     
-    (-sin(beta_1) *(cos(gamma_1)* x_1 + sin(gamma_1) *y_1) -  f*cos(beta_1)) *(cos(alpha_2)* (- sin(gamma_2) *x_2 + cos(gamma_2)* y_2) + sin(alpha_2)* (sin(beta_2) *(cos(gamma_2) *x_2 + sin(gamma_2) *y_2) +  f*cos(beta_2)))-(cos(beta_2)*(cos(gamma_2) *x_2 + sin(gamma_2)* y_2) -  f*sin(beta_2))* sin(alpha_1) *(cos(beta_1) *(cos(gamma_1)* x_1 + sin(gamma_1)* y_1) -  f*sin(beta_1)),
+    ((x1*cos(b1)*cos(g1))/f - sin(b1) + (y1*cos(b1)*sin(g1))/f)*(cos(a2)*cos(b2) +(x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f + (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f),
     
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*sin(alpha_2)*(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))-(-sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*cos(beta_2))*(cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),  #eventuellement une erreur de parenthese...
     
-    cos(beta_1)*(-sin(gamma_1)*x_1 + cos(gamma_1)*y_1)*(cos(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))-(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))*(cos(alpha_1)*(- cos(gamma_1)*x_1 -sin(gamma_1)*y_1) + sin(alpha_1)*sin(beta_1)*(-sin(gamma_1)*x_1 + cos(gamma_1)*y_1)),
-        
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*(cos(alpha_2)*(- cos(gamma_2)*x_2 -sin(gamma_2)*y_2) + sin(alpha_2)*sin(beta_2)*(-sin(gamma_2)*x_2 + cos(gamma_2)*y_2))-cos(beta_2)*(-sin(gamma_2)*x_2 + cos(gamma_2)*y_2)*(cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
+    -(((x1*cos(b1)*cos(g1)*sin(a1))/f - sin(a1)*sin(b1) +  (y1*cos(b1)*sin(a1)*sin(g1))/f)* ((x2*cos(b2)*cos(g2))/f - sin(b2) + (y2*cos(b2)*sin(g2))/f)) + (-cos(b1) - (x1*cos(g1)*sin(b1))/f -(y1*sin(b1)*sin(g1))/f)* (cos(b2)*sin(a2) + (x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f),
     
-    cos(beta_1)*cos(gamma_1)*(cos(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))-(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))*(- cos(alpha_1)*sin(gamma_1) + sin(alpha_1)*sin(beta_1)*cos(gamma_1)),
     
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*(- cos(alpha_2)*sin(gamma_2) + sin(alpha_2)*sin(beta_2)*cos(gamma_2))-cos(beta_2)*cos(gamma_2)*(cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
+    ((x1*cos(b1)*cos(g1))/f - sin(b1) + (y1*cos(b1)*sin(g1))/f)* ((x2*cos(b2)*cos(g2)*sin(a2))/f - sin(a2)*sin(b2) +  (y2*cos(b2)*sin(a2)*sin(g2))/f) - (cos(b1)*sin(a1) + (x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (y1*(cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1)))/f)* (-cos(b2) - (x2*cos(g2)*sin(b2))/f - (y2*sin(b2)*sin(g2))/f),
     
-    cos(beta_1)*sin(gamma_1)*(cos(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))-(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))*(cos(alpha_1)*cos(gamma_1) + sin(alpha_1)*sin(beta_1)*sin(gamma_1)),
     
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*(cos(alpha_2)*cos(gamma_2) + sin(alpha_2)*sin(beta_2)*sin(gamma_2))-cos(beta_2)*sin(gamma_2)*(cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))
+    -(((y1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (x1*(-(cos(a1)*cos(g1)) - sin(a1)*sin(b1)*sin(g1)))/f)* ((x2*cos(b2)*cos(g2))/f - sin(b2) + (y2*cos(b2)*sin(g2))/f)) +((y1*cos(b1)*cos(g1))/f - (x1*cos(b1)*sin(g1))/f)* (cos(b2)*sin(a2) + (x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f),
     
-    ])
     
-
-
-
-    D3=np.array([
+    -((cos(b1)*sin(a1) + (x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (y1*(cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1)))/f)* ((y2*cos(b2)*cos(g2))/f - (x2*cos(b2)*sin(g2))/f)) +((x1*cos(b1)*cos(g1))/f - sin(b1) + (y1*cos(b1)*sin(g1))/f)* ((y2*(cos(g2)*sin(a2)*sin(b2) -cos(a2)*sin(g2)))/f +  (x2*(-(cos(a2)*cos(g2)) - sin(a2)*sin(b2)*sin(g2)))/f),
     
-    (-sin(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))- (cos(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))*(cos(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) - sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1))),
     
-   (cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))*(cos(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) -sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))- (-sin(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2)+f*cos(beta_2)))*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))) #j'ai rajouté un  +f*cos(beta_2)et parenthèse qui semblent manquer dans le latex
-   ,   
+    -(((cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1))* ((x2*cos(b2)*cos(g2))/f - sin(b2) + (y2*cos(b2)*sin(g2))/f))/f) + (cos(b1)*cos(g1)*(cos(b2)*sin(a2) +  (x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f))/f,
     
-    sin(alpha_1)*(cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))- (cos(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))*cos(alpha_1)*(cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1)),
-        
-    (cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))*cos(alpha_2)*(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))- (sin(alpha_2)*(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2)))*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
     
-    (cos(alpha_1)*(- cos(gamma_1)*x_1 - sin(gamma_1)*y_1) + sin(alpha_1)*sin(beta_1)*(-sin(gamma_1)*x_1 + cos(gamma_1)*y_1))*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))- (cos(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))*(sin(alpha_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) + cos(alpha_1)*sin(beta_1)*(-sin(gamma_1)*x_1 + cos(gamma_1)*y_1)),
+    -(((cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1))* ((x2*cos(b2)*cos(g2))/f - sin(b2) +(y2*cos(b2)*sin(g2))/f))/f) + (cos(b1)*sin(g1)*(cos(b2)*sin(a2) +  (x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f))/f,
     
-    (cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))*(sin(alpha_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) + cos(alpha_2)*sin(beta_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2))- (cos(alpha_2)*(- cos(gamma_2)*x_2 - sin(gamma_2)*y_2) + sin(alpha_2)*sin(beta_2)*(-sin(gamma_2)*x_2 + cos(gamma_2)*y_2))*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
-        
-    (-cos(alpha_1)*sin(gamma_1) + sin(alpha_1)*sin(beta_1)*cos(gamma_1))*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))- (cos(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))*(sin(alpha_1)*sin(gamma_1) + cos(alpha_1)*sin(beta_1)*cos(gamma_1)),
-        
-    (cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))*(sin(alpha_2)*sin(gamma_2) + cos(alpha_2)*sin(beta_2)*cos(gamma_2))- (-cos(alpha_2)*sin(gamma_2) + sin(alpha_2)*sin(beta_2)*cos(gamma_2))*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
     
-    (cos(alpha_1)*cos(gamma_1) + sin(alpha_1)*sin(gamma_1))*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))- (cos(alpha_2)*(- sin(gamma_2)*x_2 + cos(gamma_2)*y_2) + sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))*(-sin(alpha_1)*cos(gamma_1) + cos(alpha_1)*sin(beta_1)*sin(gamma_1)),
-        
-    (cos(alpha_1)*(- sin(gamma_1)*x_1 + cos(gamma_1)*y_1) + sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))*(-sin(alpha_2)*cos(gamma_2) + cos(alpha_2)*sin(beta_2)*sin(gamma_2))- (cos(alpha_2)*cos(gamma_2)*y_2 + sin(alpha_2)*sin(beta_2)*sin(gamma_2))*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))
+    -((cos(b2)*cos(g2)*(cos(b1)*sin(a1) +  (x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (y1*(cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1)))/f))/f) + (((x1*cos(b1)*cos(g1))/f - sin(b1) +(y1*cos(b1)*sin(g1))/f)* (cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f,
+    
+    
+    -((cos(b2)*(cos(b1)*sin(a1) + (x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f + (y1*(cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1)))/f)*sin(g2))/f) + (((x1*cos(b1)*cos(g1))/f - sin(b1) +(y1*cos(b1)*sin(g1))/f)* (cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f
     
     ])
-    
     
     
     
     
     D2=np.array([
+    -((-(cos(b1)*sin(a1)) + (x1*(-(cos(g1)*sin(a1)*sin(b1)) + cos(a1)*sin(g1)))/ f +(y1*(-(cos(a1)*cos(g1)) - sin(a1)*sin(b1)*sin(g1)))/f)*((x2*cos(b2)*cos(g2))/f - sin(b2) +(y2*cos(b2)*sin(g2))/f)),
     
-    -(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))*(cos(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) - sin(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
     
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*(cos(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) - sin(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2))),
+    ((x1*cos(b1)*cos(g1))/f - sin(b1) + (y1*cos(b1)*sin(g1))/f)*(-(cos(b2)*sin(a2)) +(x2*(-(cos(g2)*sin(a2)*sin(b2)) + cos(a2)*sin(g2)))/ f + (y2*(-(cos(a2)*cos(g2)) - sin(a2)*sin(b2)*sin(g2)))/f),
     
-    (-sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*cos(beta_1))*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))-(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))*cos(alpha_1)*(cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1)),
     
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*cos(alpha_2)*(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))-(-sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*cos(beta_2))*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
+    -(((x1*cos(a1)*cos(b1)*cos(g1))/f - cos(a1)*sin(b1) +  (y1*cos(a1)*cos(b1)*sin(g1))/f)*((x2*cos(b2)*cos(g2))/f - sin(b2) + (y2*cos(b2)*sin(g2))/f)) + (-cos(b1) - (x1*cos(g1)*sin(b1))/f - (y1*sin(b1)*sin(g1))/f)* (cos(a2)*cos(b2) + (x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f +  (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f),
     
-    cos(beta_1)*(-sin(gamma_1)*x_1 + cos(gamma_1)*y_1)*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))-(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))*(sin(alpha_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(-sin(gamma_1)*x_1 + cos(gamma_1)*y_1))),
     
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*(sin(alpha_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(-sin(gamma_2)*x_2 + cos(gamma_2)*y_2)))-cos(beta_2)*(-sin(gamma_2)*x_2 + cos(gamma_2)*y_2)*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
+    ((x1*cos(b1)*cos(g1))/f - sin(b1) + (y1*cos(b1)*sin(g1))/f)* ((x2*cos(a2)*cos(b2)*cos(g2))/f -cos(a2)*sin(b2) +  (y2*cos(a2)*cos(b2)*sin(g2))/f) - (cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) +sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1)))/f)* (-cos(b2) -(x2*cos(g2)*sin(b2))/f - (y2*sin(b2)*sin(g2))/f),
     
-    cos(beta_1)*cos(gamma_1)*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))-(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))*(sin(alpha_1)*sin(gamma_1) + cos(alpha_1)*sin(beta_1)*cos(gamma_1)),
-        
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*(sin(alpha_2)*sin(gamma_2) + cos(alpha_2)*sin(beta_2)*cos(gamma_2) )-cos(beta_2)*cos(gamma_2)*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1))),
     
-    cos(beta_1)*sin(gamma_1)*(sin(alpha_2)*(sin(gamma_2)*x_2 - cos(gamma_2)*y_2) + cos(alpha_2)*(sin(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) +  f*cos(beta_2)))-(cos(beta_2)*(cos(gamma_2)*x_2 + sin(gamma_2)*y_2) -  f*sin(beta_2))*(-sin(alpha_1)*cos(gamma_1) + cos(alpha_1)*sin(beta_1)*sin(gamma_1)),
+    -(((y1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (x1*(cos(g1)*sin(a1) - cos(a1)*sin(b1)*sin(g1)))/f)* ((x2*cos(b2)*cos(g2))/f - sin(b2) + (y2*cos(b2)*sin(g2))/f)) +((y1*cos(b1)*cos(g1))/f - (x1*cos(b1)*sin(g1))/f)* (cos(a2)*cos(b2) + (x2*(cos(a2)*cos(g2)*sin(b2) +sin(a2)*sin(g2)))/f +  (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f),
     
-    (cos(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) -  f*sin(beta_1))*(-sin(alpha_2)*cos(gamma_2) + cos(alpha_2)*sin(beta_2)*sin(gamma_2))-cos(beta_2)*sin(gamma_2)*(sin(alpha_1)*(sin(gamma_1)*x_1 - cos(gamma_1)*y_1) + cos(alpha_1)*(sin(beta_1)*(cos(gamma_1)*x_1 + sin(gamma_1)*y_1) +  f*cos(beta_1)))
+    
+    -((cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) +cos(a1)*sin(b1)*sin(g1)))/f)* ((y2*cos(b2)*cos(g2))/f - (x2*cos(b2)*sin(g2))/f)) +((x1*cos(b1)*cos(g1))/f - sin(b1) + (y1*cos(b1)*sin(g1))/f)* ((y2*(cos(a2)*cos(g2)*sin(b2) +sin(a2)*sin(g2)))/f +  (x2*(cos(g2)*sin(a2) - cos(a2)*sin(b2)*sin(g2)))/f),
+    
+    
+    -(((cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1))* ((x2*cos(b2)*cos(g2))/f - sin(b2) +(y2*cos(b2)*sin(g2))/f))/f) + (cos(b1)*cos(g1)*(cos(a2)*cos(b2) +  (x2*(cos(a2)*cos(g2)*sin(b2) +sin(a2)*sin(g2)))/f +  (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f))/f,
+    
+    
+    -(((-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1))* ((x2*cos(b2)*cos(g2))/f - sin(b2) +(y2*cos(b2)*sin(g2))/f))/f) + (cos(b1)*sin(g1)*(cos(a2)*cos(b2) +  (x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f +  (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f))/f,
+    
+    
+    -((cos(b2)*cos(g2)*(cos(a1)*cos(b1) +  (x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1)))/f))/f) + (((x1*cos(b1)*cos(g1))/f - sin(b1) +(y1*cos(b1)*sin(g1))/f)* (cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f,
+    
+    
+    -((cos(b2)*(cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1)))/f)*sin(g2))/f) + (((x1*cos(b1)*cos(g1))/f -sin(b1) + (y1*cos(b1)*sin(g1))/f)* (-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f
+    
+    ])
+    
+    
+    
+    
+    D3=np.array([
+    
+    
+    (cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f + (y1*(-(cos(g1)*sin(a1)) +cos(a1)*sin(b1)*sin(g1)))/f)* (cos(a2)*cos(b2) + (x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f +(y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f) - (-(cos(b1)*sin(a1)) +(x1*(-(cos(g1)*sin(a1)*sin(b1)) + cos(a1)*sin(g1)))/f + (y1*(-(cos(a1)*cos(g1)) -sin(a1)*sin(b1)*sin(g1)))/f)* (cos(b2)*sin(a2) + (x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f),
+    
+    
+    -((cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1)))/f)* (cos(a2)*cos(b2) + (x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f +  (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f)) + (cos(b1)*sin(a1) + (x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (y1*(cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1)))/f)* (-(cos(b2)*sin(a2)) + (x2*(-(cos(g2)*sin(a2)*sin(b2)) + cos(a2)*sin(g2)))/f + (y2*(-(cos(a2)*cos(g2)) - sin(a2)*sin(b2)*sin(g2)))/f),
+    
+    
+    ((x1*cos(b1)*cos(g1)*sin(a1))/f - sin(a1)*sin(b1) +  (y1*cos(b1)*sin(a1)*sin(g1))/f)* (cos(a2)*cos(b2)+ (x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f +  (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f) - ((x1*cos(a1)*cos(b1)*cos(g1))/f - cos(a1)*sin(b1) + (y1*cos(a1)*cos(b1)*sin(g1))/f)* (cos(b2)*sin(a2) + (x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f + (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f),
+    
+    
+    (cos(b1)*sin(a1) + (x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (y1*(cos(a1)*cos(g1) +sin(a1)*sin(b1)*sin(g1)))/f)* ((x2*cos(a2)*cos(b2)*cos(g2))/f - cos(a2)*sin(b2) +  (y2*cos(a2)*cos(b2)*sin(g2))/f) - (cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) +sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1)))/f)* ((x2*cos(b2)*cos(g2)*sin(a2))/f -sin(a2)*sin(b2) +  (y2*cos(b2)*sin(a2)*sin(g2))/f),
+    
+    
+    ((y1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (x1*(-(cos(a1)*cos(g1)) - sin(a1)*sin(b1)*sin(g1)))/f)* (cos(a2)*cos(b2) + (x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f +  (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f) - ((y1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (x1*(cos(g1)*sin(a1) - cos(a1)*sin(b1)*sin(g1)))/f)* (cos(b2)*sin(a2) +(x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f),
+    
+    
+    (cos(b1)*sin(a1) + (x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (y1*(cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1)))/f)* ((y2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f +(x2*(cos(g2)*sin(a2) - cos(a2)*sin(b2)*sin(g2)))/f) - (cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1)))/f)* ((y2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (x2*(-(cos(a2)*cos(g2)) - sin(a2)*sin(b2)*sin(g2)))/f),
+    
+    
+    ((cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1))* (cos(a2)*cos(b2) + (x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f + (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f))/f -((cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1))* (cos(b2)*sin(a2) + (x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f))/f,
+    
+    
+    ((cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1))* (cos(a2)*cos(b2) + (x2*(cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f + (y2*(-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f))/f - ((-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1))* (cos(b2)*sin(a2) + (x2*(cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f +  (y2*(cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f))/f,
+    
+    
+    -(((cos(a1)*cos(b1) + (x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) + cos(a1)*sin(b1)*sin(g1)))/f)* (cos(g2)*sin(a2)*sin(b2) - cos(a2)*sin(g2)))/f) + ((cos(b1)*sin(a1) +(x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (y1*(cos(a1)*cos(g1) +sin(a1)*sin(b1)*sin(g1)))/f)* (cos(a2)*cos(g2)*sin(b2) + sin(a2)*sin(g2)))/f,
+    
+    
+    ((cos(b1)*sin(a1) + (x1*(cos(g1)*sin(a1)*sin(b1) - cos(a1)*sin(g1)))/f +  (y1*(cos(a1)*cos(g1) + sin(a1)*sin(b1)*sin(g1)))/f)* (-(cos(g2)*sin(a2)) + cos(a2)*sin(b2)*sin(g2)))/f - ((cos(a1)*cos(b1) +(x1*(cos(a1)*cos(g1)*sin(b1) + sin(a1)*sin(g1)))/f +  (y1*(-(cos(g1)*sin(a1)) +cos(a1)*sin(b1)*sin(g1)))/f)* (cos(a2)*cos(g2) + sin(a2)*sin(b2)*sin(g2)))/f
     
     ])
 
@@ -156,7 +181,7 @@ def matrice_A_B(x, theta, C):
         A_j=matrice_Aj_Bj(x, theta, C, j)[0]
         B[K*(K-1)/2*j:K*(K-1)/2*(j+1), 2*K*j:2*K*(j+1)] = B_j
         A[K*(K-1)/2*j:K*(K-1)/2*(j+1)]=A_j
-    return (1/f**2)*A, (1/f**2)*B
+    return A, B
     
 
 K, N, f = 4, 1, 10
