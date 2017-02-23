@@ -29,15 +29,15 @@ def det(C1, C2, theta1, theta2, p1, p2, f):
     
     #attention: ici on n'a pas multiplié par f**2 comme dans le latex
     
-    D1=-((cb1*sa1 + (x1*(cg1*sa1*sb1 - ca1*sg1))/f +(y1*(ca1*cg1 + sa1*sb1*sg1))/f)* ((x2*cb2*cg2)/f - sb2 + (y2*cb2*sg2)/f)) + ((x1*cb1*cg1)/f - sb1 + (y1*cb1*sg1)/f)* (cb2*sa1 +(x2*(cg2*sa1*sb2 - ca2*sg2))/f +  (y2*(ca2*cg2 + sa1*sb2*sg2))/f)
+    D1=-((cb1*sa1 + (x1*(cg1*sa1*sb1 - ca1*sg1))/f +(y1*(ca1*cg1 + sa1*sb1*sg1))/f)* ((x2*cb2*cg2)/f - sb2 + (y2*cb2*sg2)/f)) + ((x1*cb1*cg1)/f - sb1 + (y1*cb1*sg1)/f)* (cb2*sa2 +(x2*(cg2*sa2*sb2 - ca2*sg2))/f +  (y2*(ca2*cg2 + sa2*sb2*sg2))/f)
     
     
     
-    D2=-((ca1*cb1 + (x1*(ca1*cg1*sb1 + sa1*sg1))/f +  (y1*(-(cg1*sa1) + ca1*sb1*sg1))/f)* ((x2*cb2*cg2)/f - sb2 + (y2*cb2*sg2)/f)) + ((x1*cb1*cg1)/f - sb1 + (y1*cb1*sg1)/f)* (ca2*cb2 + (x2*(ca2*cg2*sb2 + sa1*sg2))/f +  (y2*(-(cg2*sa1) + ca2*sb2*sg2))/f)
+    D2=-((ca1*cb1 + (x1*(ca1*cg1*sb1 + sa1*sg1))/f +  (y1*(-(cg1*sa1) + ca1*sb1*sg1))/f)* ((x2*cb2*cg2)/f - sb2 + (y2*cb2*sg2)/f)) + ((x1*cb1*cg1)/f - sb1 + (y1*cb1*sg1)/f)* (ca2*cb2 + (x2*(ca2*cg2*sb2 + sa2*sg2))/f +  (y2*(-(cg2*sa2) + ca2*sb2*sg2))/f)
     
     
     
-    D3=(cb1*sa1 + (x1*(cg1*sa1*sb1 - ca1*sg1))/f + (y1*(ca1*cg1 + sa1*sb1*sg1))/f)* (ca2*cb2 + (x2*(ca2*cg2*sb2 + sa1*sg2))/f +  (y2*(-(cg2*sa1) + ca2*sb2*sg2))/f) -(ca1*cb1 + (x1*(ca1*cg1*sb1 + sa1*sg1))/f +  (y1*(-(cg1*sa1) + ca1*sb1*sg1))/f)* (cb2*sa1 + (x2*(cg2*sa1*sb2 - ca2*sg2))/f +  (y2*(ca2*cg2 + sa1*sb2*sg2))/f)
+    D3=(cb1*sa1 + (x1*(cg1*sa1*sb1 - ca1*sg1))/f + (y1*(ca1*cg1 + sa1*sb1*sg1))/f)* (ca2*cb2 + (x2*(ca2*cg2*sb2 + sa2*sg2))/f +  (y2*(-(cg2*sa2) + ca2*sb2*sg2))/f) -(ca1*cb1 + (x1*(ca1*cg1*sb1 + sa1*sg1))/f +  (y1*(-(cg1*sa1) + ca1*sb1*sg1))/f)* (cb2*sa2 + (x2*(cg2*sa2*sb2 - ca2*sg2))/f +  (y2*(ca2*cg2 + sa2*sb2*sg2))/f)
     
     
     m1, m2, m3 = C2[0]-C1[0], C2[1]-C1[1], C2[2]-C1[2]
@@ -221,7 +221,7 @@ def F(C, theta, x, f):
     for j in range(N):
         for (i1, i2) in liste_couples:
             FF.append(det(C[i1], C[i2], theta[i1], theta[i2], x[j, i1], x[j, i2], f))
-    return FF
+    return np.array(FF)
 
 def RX(t):
     return(np.array([[1, 0, 0], 
@@ -242,13 +242,27 @@ def matrice_R(theta):
     return np.dot(RX(theta[0]), np.dot(RY(theta[1]), RZ(theta[2])))
     
 
-def matrice_P(theta, C, f):
+def matrice_P( C, theta, f):
     R = matrice_R(theta)
     K = np.array([[f, 0, 0], [0, f, 0], [0, 0, 1]])
+    H=np.zeros((3, 4))
     P = np.zeros((3, 4))
     P[:, :3] = np.dot(K, R)
     P[:, 3] = np.dot(K, R).dot(-C)
     return P
+
+"""
+
+np.random.seed(2)
+K, N, f = 6, 20, 10
+C = (rand(K, 3) - 0.5) * 20     # tirage au sort des coordonnées entre -10 et 10
+theta = rand(K, 3) * 2 * np.pi  # tirage au sort des coordonnées des angles entre 0 et 2pi
+x = (rand(N, K, 2) - 0.5) * 10  # tirage au sort des coordonnées entre -5 et 5
+
+test=deriv_det(C[0],C[1], theta[0], theta[1], x[0,0], x[0,1],f)
+print(test)
+
+"""
 
 ## simulations
 
@@ -256,7 +270,7 @@ def matrice_P(theta, C, f):
 # on suppose les caméras situées dans une zone [0, X0] x [0, Y0] x [Z1, Z2] avec Z0 << Z1
 # on suppose les angles des caméras variant dans [3pi/4, 5pi/4]x [3pi/4, 5pi/4] x [0, 2pi]
 
-np.random.seed(1)
+np.random.seed(2)
 
 K = 6
 N = 100
@@ -270,7 +284,7 @@ C_reel[:, 2] = C_reel[:, 2] * (Z2-Z1) + Z1
 
 theta_reel = rand(K, 3)
 theta_reel[:, 0] = theta_reel[:, 0] * np.pi/2 + 3*np.pi/4
-theta_reel[:, 1] = theta_reel[:, 1] * np.pi/2 + 3*np.pi/4
+theta_reel[:, 1] = 0
 theta_reel[:, 2] *= 2 * np.pi
 
 X_reel = rand(N, 3)
@@ -278,23 +292,25 @@ X_reel[:, 0] *= X0
 X_reel[:, 1] *= Y0
 X_reel[:, 2] *= Z0
 
+"""
 plt.figure().gca(projection = '3d')    # crée une figure 3D
 plt.xlabel('X'), plt.ylabel('Y')
 plt.plot(X_reel[:, 0], X_reel[:, 1], X_reel[:, 2], marker='+', markersize=3, color='b', label='points', linestyle='None')
 plt.plot(C_reel[:, 0], C_reel[:, 1], C_reel[:, 2], marker='+', markersize=10, color='r', label='cameras', linestyle='None')
 plt.legend(loc='best')
-
-
-
+"""
 matrices_P = []
 for k in range(K):
-    matrices_P.append(matrice_P(theta_reel[k], C_reel[k], f))
+    matrices_P.append(matrice_P(C_reel[k], theta_reel[k], f))
 
 x_reel = np.zeros((N, K, 2))
 for j in range(N):
     for i in range(K):
         point = matrices_P[i].dot(np.array([X_reel[j, 0], X_reel[j, 1], X_reel[j, 2], 1]))
         x_reel[j, i] = point[:-1] / point[-1]
+        
+        
+
 
 # perturbation des coordonnées et des angles
 
@@ -310,7 +326,7 @@ A, B = matrices_A_B(C_reel, theta_0, x_0, f)
 M = np.concatenate((A, B), axis=1)
 piM = np.linalg.pinv(M)
 
-erreur = piM.dot(F(C_reel, theta_0, x_0, f))
+erreur = piM.dot(-F(C_reel, theta_0, x_0, f))
 
 theta_a = theta_0 + erreur[:3*K].reshape((K, 3))
 x_a = np.zeros((N, K, 2))
@@ -321,6 +337,7 @@ for j in range(N):
 
 n_0 = [sl.norm(x_reel-x_0), sl.norm(theta_reel-theta_0)]
 n_a = [sl.norm(x_reel-x_a), sl.norm(theta_reel-theta_a)]
+
 
 
 
