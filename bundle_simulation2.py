@@ -6,7 +6,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from numpy.random import rand, normal
 import scipy.linalg as sl
 
-plt.show()
 
 ## fonctions
 
@@ -169,7 +168,7 @@ def RZ(t):
                      [0, 0, 1]]))
 
 def matrice_R(theta):
-    return np.dot(RX(theta[0]), np.dot(RY(theta[1]), RZ(theta[2])))
+    return np.dot(RZ(theta[2]), np.dot(RY(theta[1]), RX(theta[0])))
 
 def matrice_P(C, theta, f):
     R = matrice_R(theta)
@@ -287,7 +286,7 @@ def calcul_D2(C1, C2, theta1, theta2, p1, p2, f):
 np.random.seed(0)
 
 K = 6
-N = 100
+N = 10
 f = 12
 X0, Y0, Z0, Z1, Z2 = 100000, 100000, 5000, 700000, 800000
 
@@ -297,9 +296,10 @@ C_reel[:, 1] *= Y0
 C_reel[:, 2] = C_reel[:, 2] * (Z2-Z1) + Z1
 
 theta_reel = rand(K, 3)
-theta_reel[:, 0] = theta_reel[:, 0] * np.pi/50 + 99*np.pi/100
-theta_reel[:, 1] = (theta_reel[:, 1] - 0.5) * np.pi/100
-theta_reel[:, 1:] = 0
+theta_reel[:, 0] = (theta_reel[:, 0] - 0.5) * np.pi/50 + np.pi
+theta_reel[:, 1] = 0
+# theta_reel[:, 2] = 0
+theta_reel[:, 2] = theta_reel[:, 2] * 2*np.pi
 
 X_reel = rand(N, 3)
 X_reel[:, 0] *= X0
@@ -310,6 +310,7 @@ Z_cam = []
 for theta in theta_reel:
     Z_cam.append(matrice_R(theta).dot(np.array([0, 0, 1])))
 
+"""
 plt.figure().gca(projection = '3d')    # crée une figure 3D
 plt.xlabel('X'), plt.ylabel('Y')
 plt.plot(X_reel[:, 0], X_reel[:, 1], X_reel[:, 2], marker='+', markersize=3, color='b', label='points', linestyle='None')
@@ -317,10 +318,12 @@ plt.plot(C_reel[:, 0], C_reel[:, 1], C_reel[:, 2], marker='+', markersize=10, co
 plt.legend(loc='best')
 plt.xlim(0, X0), plt.ylim(0, Y0)
 
+
 t = 300000
 for C, Z in zip(C_reel, Z_cam):
     ZZ = C + t*Z
     plt.plot([C[0], ZZ[0]], [C[1], ZZ[1]], [C[2], ZZ[2]], color='k')    # trace les axes Z_cam
+"""
 
 matrices_P = []
 for k in range(K):
@@ -332,13 +335,23 @@ for j in range(N):
         point = matrices_P[i].dot(np.array([X_reel[j, 0], X_reel[j, 1], X_reel[j, 2], 1]))
         x_reel[j, i] = point[:-1] / point[-1]
 
+print('F_reel =', F(C_reel, theta_reel, x_reel, f))
+
 # perturbation des coordonnées et des angles
 
-sigma_x = 0.0001
-sigma_theta = 0.0001
+sigma_x = 0.01
+sigma_theta = 0.00001
+#sigma_x = 10**-8
+#sigma_theta = 10**-10
+
 
 x_0 = x_reel + normal(0, sigma_x, (N, K, 2))
 theta_0 = theta_reel + normal(0, sigma_theta, (K, 3))
+
+#x_0 = x_reel
+#theta_0 = theta_reel
+
+print('F_0 =', F(C_reel, theta_0, x_0, f))
 
 # minimisation de F
 
@@ -348,17 +361,22 @@ piM = np.linalg.pinv(M)
 
 erreur = piM.dot(-F(C_reel, theta_0, x_0, f))
 
-
 theta_a = theta_0 + erreur[:3*K].reshape((K, 3))
 x_a = np.zeros((N, K, 2))
 for j in range(N):
     for i in range(K):
         x_a[j, i, 0] = x_0[j, i, 0] + erreur[3*K + 2*K*j + 2*i]
-        x_a[j, i, 1] = x_0[j, i, 0] + erreur[3*K + 2*K*j + 2*i + 1]
+        x_a[j, i, 1] = x_0[j, i, 1] + erreur[3*K + 2*K*j + 2*i + 1]
+
+print('F_a =', F(C_reel, theta_a, x_a, f))
 
 n_0 = [sl.norm(x_reel[:, :, 0]-x_0[:, :, 0]), sl.norm(x_reel[:, :, 1]-x_0[:, :, 1]), sl.norm(theta_reel-theta_0)]
-n_a = [sl.norm(x_reel[:, :, 0]-x_a[:, :, 0]), sl.norm(x_reel[:, :, 1]-x_a[:, :, 1]),sl.norm(theta_reel-theta_a)] 
+n_a = [sl.norm(x_reel[:, :, 0]-x_a[:, :, 0]), sl.norm(x_reel[:, :, 1]-x_a[:, :, 1]), sl.norm(theta_reel-theta_a)]
 
+print('n_0 =', n_0)
+print('n_a =', n_a)
+
+plt.show()
 
 
 
