@@ -106,6 +106,7 @@ def reestimation_globale(x_exact=False, theta_exact=False, affichage=False, AC=F
     x_exact [bool] : si vrai, fixe x_0 à x_reel (pas de perturbation des points)
     theta_exact [bool] : si vrai, fixe theta_0 à theta_reel (pas de perturbation des angles)
     affichage [bool] : si vrai, affiche les données créées sur une figure 3D
+    AC [bool] : si vrai, rajoute une contrainte 
     
     SORTIES
     C_reel [array (K, 3)] : coordonnées des caméras
